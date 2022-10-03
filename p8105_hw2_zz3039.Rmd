@@ -1,0 +1,47 @@
+---
+title: "p8105_hw2"
+output: html_document
+date: "2022-10-02"
+---
+```{r chunk_library}
+library(tidyverse)
+library(tidyr)
+library(readr)
+library(haven)
+library(readxl)
+options(tibble.print_min = 5)
+```
+
+how to use ifelse?
+```{r chunk_Problem1, eval=FALSE}
+subway_data =
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+  select(line, station_name, station_latitude, station_longitude,
+         route1:route11, entry, vending, entrance_type, ada, ada_notes) 
+```
+
+```{r chunk_Problem2}
+wheel_data1 =
+  read_excel(
+    "./data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
+    sheet = "Mr. Trash Wheel",
+    skip = 1,
+    range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  rename(
+    weight = weight_tons,
+    volume = volume_cubic_yards,
+    PlasticBottles = plastic_bottles,
+    Polystyrene = polystyrene,
+    CigaretteButts = cigarette_butts,
+    GlassBottles = glass_bottles,
+    GroceryBags = grocery_bags,
+    ChipBags = chip_bags,
+    SportsBalls = sports_balls,
+    HomesPowered = homes_powered) %>% 
+  drop_na(dumpster)
+wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)
+```
+
+

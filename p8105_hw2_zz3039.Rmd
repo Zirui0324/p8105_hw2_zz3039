@@ -21,7 +21,7 @@ subway_data =
          route1:route11, entry, vending, entrance_type, ada, ada_notes) 
 ```
 
-```{r chunk_Problem2}
+```{r chunk_Problem2_mr}
 wheel_data1 =
   read_excel(
     "./data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
@@ -41,7 +41,32 @@ wheel_data1 =
     SportsBalls = sports_balls,
     HomesPowered = homes_powered) %>% 
   drop_na(dumpster)
+wheel_data1$SportsBalls =
+  round(wheel_data1$SportsBalls, digits = 0)
 wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)
 ```
 
-
+```{r chunk_Problem2_professor}
+wheel_data2 =
+  read_excel(
+    "./data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
+    sheet = "Professor Trash Wheel",
+    skip = 1,
+    range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  rename(
+    weight = weight_tons,
+    volume = volume_cubic_yards,
+    PlasticBottles = plastic_bottles,
+    Polystyrene = polystyrene,
+    CigaretteButts = cigarette_butts,
+    GlassBottles = glass_bottles,
+    GroceryBags = grocery_bags,
+    ChipBags = chip_bags,
+    SportsBalls = sports_balls,
+    HomesPowered = homes_powered) %>% 
+  drop_na(dumpster)
+wheel_data2$SportsBalls =
+  round(wheel_data2$SportsBalls, digits = 0)
+wheel_data2$SportsBalls = as.integer(wheel_data2$SportsBalls)
+```

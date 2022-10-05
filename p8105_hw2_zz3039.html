@@ -425,8 +425,9 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
 <h2>Problem 3</h2>
 <pre class="r"><code>pols_month_data = read_csv(&quot;./data/pols-month.csv&quot;) %&gt;%
   separate(mon, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
-  mutate(month = as.factor(month)) %&gt;%
-  mutate(month = month.abb[month]) %&gt;% 
+  mutate(month = as.factor(month),
+         month = month.abb[month],
+         month = factor(month, levels = month.abb)) %&gt;% 
   mutate(prez = prez_gop - prez_dem) %&gt;%
   mutate(
     president = recode(
@@ -450,16 +451,18 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
 ## Please specify replacements exhaustively or supply `.default`.</code></pre>
 <pre class="r"><code>snp_data = read_csv(&quot;./data/snp.csv&quot;) %&gt;%
   separate(date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;) %&gt;% 
-  arrange(year, month) %&gt;% 
-  select(year, month, everything()) %&gt;% 
-  mutate(month = as.factor(month)) %&gt;%
-  mutate(month = month.abb[month]) %&gt;% 
+  select(-day) %&gt;% 
+  mutate(month = as.factor(month),
+         month = month.abb[month], 
+         month = factor(month, levels = month.abb)) %&gt;% 
   mutate(year = as.numeric(year)) %&gt;% 
   mutate(
     year = 
       case_when(
         year &lt;= 22 ~ year + 2000,
-        year &gt; 22 ~ year + 1900))</code></pre>
+        year &gt; 22 ~ year + 1900)) %&gt;%
+  arrange(year, month) %&gt;% 
+  select(year, month, everything())</code></pre>
 <pre><code>## Rows: 787 Columns: 2
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -474,7 +477,10 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
       names_to = &quot;month&quot;,
       values_to = &quot;prct&quot;
     ) %&gt;% 
-  janitor::clean_names()</code></pre>
+  janitor::clean_names() %&gt;% 
+  mutate(month = factor(month, levels = month.abb)) %&gt;% 
+  arrange(year, month) %&gt;% 
+  select(year, month, everything())</code></pre>
 <pre><code>## Rows: 68 Columns: 13
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;

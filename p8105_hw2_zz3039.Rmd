@@ -21,6 +21,7 @@ subway_data =
          route1:route11, entry, vending, entrance_type, ada, ada_notes) 
 ```
 
+## Problem 2
 ```{r chunk_Problem2_mr}
 wheel_data1 =
   read_excel(
@@ -66,3 +67,53 @@ wheel_data2 =
     HomesPowered = homes_powered) %>% 
   drop_na(dumpster)
 ```
+
+```{r chunk_Problem2_join}
+wheel_join = 
+  inner_join(wheel_data1, wheel_data2, by = "date") %>% 
+  janitor::clean_names()
+```
+
+## Problem 3
+
+mutate month
+```{r chunk_pols}
+pols_month_data = read_csv("./data/pols-month.csv") %>%
+  separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(prez = prez_gop - prez_dem) %>% 
+  mutate(
+    president = recode(
+      prez,
+      "1" = "republican",
+      "-1" = "democratic"
+    )
+  ) %>% 
+  select(- prez, -prez_gop, - prez_dem, -day) %>% 
+  arrange(year, month) %>% 
+  select(year, month, everything())
+```
+mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.abb(month))
+
+mutate month and year
+```{r chunk_snp}
+snp_data = read_csv("./data/snp.csv") %>%
+  separate(date, into = c("month", "day", "year"), sep = "/") %>% 
+  arrange(year, month) %>% 
+  select(year, month, everything()) %>% 
+  mutate()
+```
+
+```{r chunk_unemploy}
+unem_data = read_csv("./data/unemployment.csv") 
+unem_tidy_data =
+    pivot_longer(
+      unem_data,
+      Jan:Dec,
+      names_to = "mon",
+      values_to = "prct"
+    )
+
+  
+```
+

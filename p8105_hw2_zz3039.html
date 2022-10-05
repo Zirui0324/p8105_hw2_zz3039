@@ -381,6 +381,8 @@ options(tibble.print_min = 5)</code></pre>
   janitor::clean_names() %&gt;% 
   select(line, station_name, station_latitude, station_longitude,
          route1:route11, entry, vending, entrance_type, ada, ada_notes) </code></pre>
+<div id="problem-2" class="section level2">
+<h2>Problem 2</h2>
 <pre class="r"><code>wheel_data1 =
   read_excel(
     &quot;./data/Trash Wheel Collection Data.xlsx&quot;,
@@ -421,6 +423,68 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
     ChipBags = chip_bags,
     HomesPowered = homes_powered) %&gt;% 
   drop_na(dumpster)</code></pre>
+<pre class="r"><code>wheel_join = 
+  inner_join(wheel_data1, wheel_data2, by = &quot;date&quot;) %&gt;% 
+  janitor::clean_names()</code></pre>
+</div>
+<div id="problem-3" class="section level2">
+<h2>Problem 3</h2>
+<p>mutate month</p>
+<pre class="r"><code>pols_month_data = read_csv(&quot;./data/pols-month.csv&quot;) %&gt;%
+  separate(mon, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
+  mutate(prez = prez_gop - prez_dem) %&gt;% 
+  mutate(
+    president = recode(
+      prez,
+      &quot;1&quot; = &quot;republican&quot;,
+      &quot;-1&quot; = &quot;democratic&quot;
+    )
+  ) %&gt;% 
+  select(- prez, -prez_gop, - prez_dem, -day) %&gt;% 
+  arrange(year, month) %&gt;% 
+  select(year, month, everything())</code></pre>
+<pre><code>## Rows: 822 Columns: 9
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl  (8): prez_gop, gov_gop, sen_gop, rep_gop, prez_dem, gov_dem, sen_dem, r...
+## date (1): mon
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## Warning: Unreplaced values treated as NA as `.x` is not compatible.
+## Please specify replacements exhaustively or supply `.default`.</code></pre>
+<p>mutate(month = as.numeric(month)) %&gt;% mutate(month =
+month.abb(month))</p>
+<p>mutate month and year</p>
+<pre class="r"><code>snp_data = read_csv(&quot;./data/snp.csv&quot;) %&gt;%
+  separate(date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;) %&gt;% 
+  arrange(year, month) %&gt;% 
+  select(year, month, everything()) %&gt;% 
+  mutate()</code></pre>
+<pre><code>## Rows: 787 Columns: 2
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (1): date
+## dbl (1): close
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>unem_data = read_csv(&quot;./data/unemployment.csv&quot;) </code></pre>
+<pre><code>## Rows: 68 Columns: 13
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (13): Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>unem_tidy_data =
+    pivot_longer(
+      unem_data,
+      Jan:Dec,
+      names_to = &quot;mon&quot;,
+      values_to = &quot;prct&quot;
+    )</code></pre>
+</div>
 
 
 

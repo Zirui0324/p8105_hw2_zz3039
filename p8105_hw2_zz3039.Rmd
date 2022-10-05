@@ -1,7 +1,8 @@
 ---
-title: "p8105_hw2"
-output: html_document
+title: "p8105_hw2_zz3039"
+author: "Zirui Zhang"
 date: "2022-10-02"
+output: github_document
 ---
 ```{r chunk_library}
 library(tidyverse)
@@ -33,8 +34,11 @@ wheel_data1 =
     SportsBalls = sports_balls,
     HomesPowered = homes_powered) %>% 
   drop_na(dumpster) %>% 
+  mutate(WheelName = "Mr. Trash Wheel") %>% 
   mutate(SportsBalls =round(SportsBalls, digits = 0),
-         SportsBalls = as.integer(SportsBalls))
+         SportsBalls = as.integer(SportsBalls)) %>% 
+  select(dumpster, date, year, month, WheelName, everything())
+wheel_data1
 ```
 
 ```{r chunk_Problem2_professor}
@@ -55,14 +59,25 @@ wheel_data2 =
     GroceryBags = grocery_bags,
     ChipBags = chip_bags,
     HomesPowered = homes_powered) %>% 
-  drop_na(dumpster)
+  drop_na(dumpster) %>% 
+  mutate(
+    WheelName = "Professor Trash Wheel",
+    year = as.character(year)) %>%
+  select(dumpster, date, year, month, WheelName, everything())
+wheel_data2
 ```
 
 ```{r chunk_Problem2_join}
-wheel_join = 
-  inner_join(wheel_data1, wheel_data2, by = "date") %>% 
-  janitor::clean_names()
+wheel_bind = 
+  bind_rows(wheel_data1, wheel_data2) 
+wheel_bind
 ```
+The total number of observations in this data is `r nrow(wheel_bind)`, the key variables include `r names(wheel_bind)`;
+
+The total weight of trash collected by Professor Trash Wheel is `r sum(wheel_bind$weight[wheel_bind$WheelName == 'Professor Trash Wheel'])`tons.
+
+The total number of sports balls collected by Mr. Trash Wheel in 2020 was`r sum(wheel_bind$SportsBalls[wheel_bind$year == 2020], na.rm = TRUE)`.
+
 
 ## Problem 3
 
@@ -83,6 +98,7 @@ pols_month_data = read_csv("./data/pols-month.csv") %>%
   select(- prez, -prez_gop, - prez_dem, -day) %>% 
   arrange(year, month) %>% 
   select(year, month, everything())
+pols_month_data
 ```
 
 ```{r chunk_snp}
@@ -100,6 +116,7 @@ snp_data = read_csv("./data/snp.csv") %>%
         year > 22 ~ year + 1900)) %>%
   arrange(year, month) %>% 
   select(year, month, everything())
+snp_data
 ```
 
 ```{r chunk_unem}
@@ -113,10 +130,30 @@ unem_data = read_csv("./data/unemployment.csv") %>%
   mutate(month = factor(month, levels = month.abb)) %>% 
   arrange(year, month) %>% 
   select(year, month, everything())
+unem_data
 ```
 
-```{r chunk_join, eval=FALSE}
+```{r chunk_join}
 join1 =
-  left_join(pols_month_data, snp_data, by = )
+  merge(
+    x = pols_month_data,
+    y = snp_data,
+    by.x = c("year", "month"),
+    by.y = c("year", "month"))
+join2 = 
+  merge(
+    x = join1,
+    y = unem_data,
+    by.x = c("year", "month"),
+    by.y = c("year", "month")
+  )
 ```
+
+The _pols_month_data_ dataset contained the number of governors, senators, representative of the two parties, while also showing the party of the president on the associate date.
+
+The _snp_data_ dataset contained the Standard & Poor’s stock market index on the associated date.
+
+The _unem_data_ contained the percentage of unemployment on the associate date.
+
+The resulting dataset _join2_ is a combination of the 3 datasets, it has `r ncol(join2)` dimensions with a year range across `r min(join2$year)` to `r max(join2$year)`. The key variables in _join2_ include `r names(join2)`.
 

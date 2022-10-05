@@ -105,14 +105,12 @@ snp_data = read_csv("./data/snp.csv") %>%
 ```
 
 ```{r chunk_unemploy}
-unem_data = read_csv("./data/unemployment.csv") 
-unem_tidy_data =
-    pivot_longer(
-      unem_data,
+unem_data = read_csv("./data/unemployment.csv") %>%
+  pivot_longer(
       Jan:Dec,
-      names_to = "mon",
+      names_to = "month",
       values_to = "prct"
-    )
+    ) 
 
   
 ```

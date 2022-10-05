@@ -375,12 +375,6 @@ library(readr)
 library(haven)
 library(readxl)
 options(tibble.print_min = 5)</code></pre>
-<p>how to use ifelse?</p>
-<pre class="r"><code>subway_data =
-  read_csv(&quot;./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  select(line, station_name, station_latitude, station_longitude,
-         route1:route11, entry, vending, entrance_type, ada, ada_notes) </code></pre>
 <div id="problem-2" class="section level2">
 <h2>Problem 2</h2>
 <pre class="r"><code>wheel_data1 =
@@ -429,10 +423,11 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
 </div>
 <div id="problem-3" class="section level2">
 <h2>Problem 3</h2>
-<p>mutate month</p>
 <pre class="r"><code>pols_month_data = read_csv(&quot;./data/pols-month.csv&quot;) %&gt;%
   separate(mon, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
-  mutate(prez = prez_gop - prez_dem) %&gt;% 
+  mutate(month = as.factor(month)) %&gt;%
+  mutate(month = month.abb[month]) %&gt;% 
+  mutate(prez = prez_gop - prez_dem) %&gt;%
   mutate(
     president = recode(
       prez,
@@ -453,14 +448,18 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre><code>## Warning: Unreplaced values treated as NA as `.x` is not compatible.
 ## Please specify replacements exhaustively or supply `.default`.</code></pre>
-<p>mutate(month = as.numeric(month)) %&gt;% mutate(month =
-month.abb(month))</p>
-<p>mutate month and year</p>
 <pre class="r"><code>snp_data = read_csv(&quot;./data/snp.csv&quot;) %&gt;%
   separate(date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;) %&gt;% 
   arrange(year, month) %&gt;% 
   select(year, month, everything()) %&gt;% 
-  mutate()</code></pre>
+  mutate(month = as.factor(month)) %&gt;%
+  mutate(month = month.abb[month]) %&gt;% 
+  mutate(year = as.numeric(year)) %&gt;% 
+  mutate(
+    year = 
+      case_when(
+        year &lt;= 22 ~ year + 2000,
+        year &gt; 22 ~ year + 1900))</code></pre>
 <pre><code>## Rows: 787 Columns: 2
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -474,7 +473,8 @@ month.abb(month))</p>
       Jan:Dec,
       names_to = &quot;month&quot;,
       values_to = &quot;prct&quot;
-    ) </code></pre>
+    ) %&gt;% 
+  janitor::clean_names()</code></pre>
 <pre><code>## Rows: 68 Columns: 13
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;

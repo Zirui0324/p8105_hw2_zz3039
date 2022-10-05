@@ -12,15 +12,6 @@ library(readxl)
 options(tibble.print_min = 5)
 ```
 
-how to use ifelse?
-```{r chunk_Problem1, eval=FALSE}
-subway_data =
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
-  janitor::clean_names() %>% 
-  select(line, station_name, station_latitude, station_longitude,
-         route1:route11, entry, vending, entrance_type, ada, ada_notes) 
-```
-
 ## Problem 2
 ```{r chunk_Problem2_mr}
 wheel_data1 =
@@ -76,11 +67,12 @@ wheel_join =
 
 ## Problem 3
 
-mutate month
 ```{r chunk_pols}
 pols_month_data = read_csv("./data/pols-month.csv") %>%
   separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
-  mutate(prez = prez_gop - prez_dem) %>% 
+  mutate(month = as.factor(month)) %>%
+  mutate(month = month.abb[month]) %>% 
+  mutate(prez = prez_gop - prez_dem) %>%
   mutate(
     president = recode(
       prez,
@@ -92,16 +84,20 @@ pols_month_data = read_csv("./data/pols-month.csv") %>%
   arrange(year, month) %>% 
   select(year, month, everything())
 ```
-mutate(month = as.numeric(month)) %>% 
-  mutate(month = month.abb(month))
 
-mutate month and year
 ```{r chunk_snp}
 snp_data = read_csv("./data/snp.csv") %>%
   separate(date, into = c("month", "day", "year"), sep = "/") %>% 
   arrange(year, month) %>% 
   select(year, month, everything()) %>% 
-  mutate()
+  mutate(month = as.factor(month)) %>%
+  mutate(month = month.abb[month]) %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate(
+    year = 
+      case_when(
+        year <= 22 ~ year + 2000,
+        year > 22 ~ year + 1900))
 ```
 
 ```{r chunk_unemploy}
@@ -110,8 +106,7 @@ unem_data = read_csv("./data/unemployment.csv") %>%
       Jan:Dec,
       names_to = "month",
       values_to = "prct"
-    ) 
-
-  
+    ) %>% 
+  janitor::clean_names()
 ```
 

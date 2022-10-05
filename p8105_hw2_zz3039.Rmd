@@ -4,7 +4,7 @@ author: "Zirui Zhang"
 date: "2022-10-02"
 output: github_document
 ---
-```{r chunk_library}
+```{r chunk_library, message=FALSE}
 library(tidyverse)
 library(tidyr)
 library(readr)
@@ -34,8 +34,8 @@ wheel_data1 =
     SportsBalls = sports_balls,
     HomesPowered = homes_powered) %>% 
   drop_na(dumpster) %>% 
-  mutate(WheelName = "Mr. Trash Wheel") %>% 
-  mutate(SportsBalls =round(SportsBalls, digits = 0),
+  mutate(WheelName = "Mr. Trash Wheel",
+         SportsBalls =round(SportsBalls, digits = 0),
          SportsBalls = as.integer(SportsBalls)) %>% 
   select(dumpster, date, year, month, WheelName, everything())
 wheel_data1
@@ -72,19 +72,21 @@ wheel_bind =
   bind_rows(wheel_data1, wheel_data2) 
 wheel_bind
 ```
-The total number of observations in this data is `r nrow(wheel_bind)`, the key variables include `r names(wheel_bind)`;
+* The total number of observations in this data is **`r nrow(wheel_bind)`**, the key variables include: ***`r names(wheel_bind)`***;
 
-The total weight of trash collected by Professor Trash Wheel is `r sum(wheel_bind$weight[wheel_bind$WheelName == 'Professor Trash Wheel'])`tons.
+* The total weight of trash collected by Professor Trash Wheel is **`r sum(wheel_bind$weight[wheel_bind$WheelName == 'Professor Trash Wheel'])`** tons.
 
-The total number of sports balls collected by Mr. Trash Wheel in 2020 was`r sum(wheel_bind$SportsBalls[wheel_bind$year == 2020], na.rm = TRUE)`.
+* The total number of sports balls collected by Mr. Trash Wheel in 2020 was **`r sum(wheel_bind$SportsBalls[wheel_bind$year == 2020], na.rm = TRUE)`**.
 
 
 ## Problem 3
 
-```{r chunk_pols}
+```{r chunk_pols, warning=FALSE, message=FALSE}
 pols_month_data = read_csv("./data/pols-month.csv") %>%
   separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
-  mutate(month = as.factor(month),
+  mutate(year = as.integer(year),
+         day = as.integer(day),
+         month = as.integer(month),
          month = month.abb[month],
          month = factor(month, levels = month.abb)) %>% 
   mutate(prez = prez_gop - prez_dem) %>%
@@ -95,17 +97,18 @@ pols_month_data = read_csv("./data/pols-month.csv") %>%
       "-1" = "democratic"
     )
   ) %>% 
-  select(- prez, -prez_gop, - prez_dem, -day) %>% 
+  select(- prez, -prez_gop, - prez_dem, -day) %>%
   arrange(year, month) %>% 
   select(year, month, everything())
 pols_month_data
 ```
 
-```{r chunk_snp}
+```{r chunk_snp, warning=FALSE, message=FALSE}
 snp_data = read_csv("./data/snp.csv") %>%
   separate(date, into = c("month", "day", "year"), sep = "/") %>% 
   select(-day) %>% 
-  mutate(month = as.factor(month),
+  mutate(year = as.integer(year),
+         month = as.integer(month),
          month = month.abb[month], 
          month = factor(month, levels = month.abb)) %>% 
   mutate(year = as.numeric(year)) %>% 
@@ -119,7 +122,7 @@ snp_data = read_csv("./data/snp.csv") %>%
 snp_data
 ```
 
-```{r chunk_unem}
+```{r chunk_unem, warning=FALSE, message=FALSE}
 unem_data = read_csv("./data/unemployment.csv") %>%
   pivot_longer(
       Jan:Dec,
@@ -149,11 +152,11 @@ join2 =
   )
 ```
 
-The _pols_month_data_ dataset contained the number of governors, senators, representative of the two parties, while also showing the party of the president on the associate date.
+* The **_pols_month_data_** dataset contained the number of ***governors***, ***senators***, ***representatives*** of the two parties, while also showing the ***party of the president*** on the associate date.
 
-The _snp_data_ dataset contained the Standard & Poor’s stock market index on the associated date.
+* The **_snp_data_** dataset contained the ***Standard & Poor’s stock market index*** on the associated date.
 
-The _unem_data_ contained the percentage of unemployment on the associate date.
+* The **_unem_data_** contained the ***percentage of unemployment*** on the associate date.
 
-The resulting dataset _join2_ is a combination of the 3 datasets, it has `r ncol(join2)` dimensions with a year range across `r min(join2$year)` to `r max(join2$year)`. The key variables in _join2_ include `r names(join2)`.
+* The resulting dataset **_join2_** is a combination of the **3** datasets above, it has **`r ncol(join2)`** dimensions with a year range across **`r min(join2$year)`** to **`r max(join2$year)`**. The key variables in **_join2_** include ***`r names(join2)`***.
 

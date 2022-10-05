@@ -32,10 +32,9 @@ wheel_data1 =
     ChipBags = chip_bags,
     SportsBalls = sports_balls,
     HomesPowered = homes_powered) %>% 
-  drop_na(dumpster)
-wheel_data1$SportsBalls =
-  round(wheel_data1$SportsBalls, digits = 0)
-wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)
+  drop_na(dumpster) %>% 
+  mutate(SportsBalls =round(SportsBalls, digits = 0),
+         SportsBalls = as.integer(SportsBalls))
 ```
 
 ```{r chunk_Problem2_professor}
@@ -103,7 +102,7 @@ snp_data = read_csv("./data/snp.csv") %>%
   select(year, month, everything())
 ```
 
-```{r chunk_unemploy}
+```{r chunk_unem}
 unem_data = read_csv("./data/unemployment.csv") %>%
   pivot_longer(
       Jan:Dec,
@@ -114,5 +113,10 @@ unem_data = read_csv("./data/unemployment.csv") %>%
   mutate(month = factor(month, levels = month.abb)) %>% 
   arrange(year, month) %>% 
   select(year, month, everything())
+```
+
+```{r chunk_join, eval=FALSE}
+join1 =
+  left_join(pols_month_data, snp_data, by = )
 ```
 

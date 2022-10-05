@@ -395,10 +395,9 @@ options(tibble.print_min = 5)</code></pre>
     ChipBags = chip_bags,
     SportsBalls = sports_balls,
     HomesPowered = homes_powered) %&gt;% 
-  drop_na(dumpster)
-wheel_data1$SportsBalls =
-  round(wheel_data1$SportsBalls, digits = 0)
-wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
+  drop_na(dumpster) %&gt;% 
+  mutate(SportsBalls =round(SportsBalls, digits = 0),
+         SportsBalls = as.integer(SportsBalls))</code></pre>
 <pre class="r"><code>wheel_data2 =
   read_excel(
     &quot;./data/Trash Wheel Collection Data.xlsx&quot;,
@@ -488,6 +487,8 @@ wheel_data1$SportsBalls = as.integer(wheel_data1$SportsBalls)</code></pre>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>join1 =
+  left_join(pols_month_data, snp_data, by = )</code></pre>
 </div>
 
 
